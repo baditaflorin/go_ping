@@ -45,7 +45,7 @@ make docker-run         # exposes :8080
 ## 📦 Build & Push a Multi‑Arch Image
 
 ```bash
-export IMAGE="ghcr.io/<GH_USER>/ping:latest"
+export IMAGE="ghcr.io/baditaflorin/ping:latest"
 
 docker buildx build \
   --platform linux/amd64,linux/arm64/v8 \
@@ -55,13 +55,13 @@ docker buildx build \
 
 ### Make the package public (once)
 
-1. Open **https://github.com/users/<GH_USER>/packages/container/ping**
+1. Open **https://github.com/users/baditaflorin/packages/container/ping**
 2. **Package settings → Make public**
 
 Anyone (or any CI) can now pull without a PAT:
 
 ```bash
-docker pull ghcr.io/<GH_USER>/ping:latest
+docker pull ghcr.io/baditaflorin/ping:latest
 ```
 
 ---
