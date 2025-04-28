@@ -1,0 +1,13 @@
+version: "3.9"
+
+services:
+  ping:
+    image: ghcr.io/baditaflorin/ping:latest
+    container_name: ping
+    restart: unless-stopped
+
+    environment:
+      - PORT=23451
+
+    ports:
+      - "23451:23451"     # host:container
