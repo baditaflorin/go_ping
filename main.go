@@ -13,13 +13,13 @@ func pong(w http.ResponseWriter, _ *http.Request) {
 }
 
 func main() {
-	http.HandleFunc("/ping", pong)
+	http.HandleFunc("/", pong)
 
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
 	}
 
-	log.Printf("⇨  listening on :%s /ping", port)
+	log.Printf("⇨  listening on :%s /", port)
 	log.Fatal(http.ListenAndServe(":"+port, nil))
 }
