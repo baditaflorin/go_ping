@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -14,12 +13,6 @@ import (
 	"ping/middleware"
 	"ping/observability"
 )
-
-// Legacy handler for backward compatibility
-func pong(w http.ResponseWriter, _ *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	fmt.Fprintln(w, "pong")
-}
 
 func main() {
 	// Initialize metrics
