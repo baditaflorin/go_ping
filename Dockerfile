@@ -1,11 +1,22 @@
 # -------- build stage --------
 FROM golang:1.23-alpine AS builder
 WORKDIR /src
-COPY go.mod go.sum ./
-RUN CGO_ENABLED=0 GOSUMDB=off go mod download || true
 
+# Copy go mod files
+COPY go.mod ./
+
+# Download dependencies and generate go.sum
+# Using go.sum checksum database for verification
+RUN go mod download && go mod verify
+
+# Copy source code
 COPY . .
-RUN CGO_ENABLED=0 GOOS=linux GOSUMDB=off go build -o /bin/ping .
+
+# Build the application
+RUN CGO_ENABLED=0 GOOS=linux go build \
+    -ldflags='-w -s -extldflags "-static"' \
+    -a \
+    -o /bin/ping .
 
 # -------- runtime stage --------
 FROM gcr.io/distroless/static:nonroot
