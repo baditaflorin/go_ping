@@ -1,0 +1,13 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    monitor: 'ping-service-monitor'
+
+scrape_configs:
+  - job_name: 'ping-service'
+    static_configs:
+      - targets: ['ping:8080']
+    metrics_path: '/metrics'
+    scrape_interval: 5s
+    scrape_timeout: 5s

@@ -2,12 +2,34 @@ version: "3.9"
 
 services:
   ping:
-    image: ghcr.io/baditaflorin/ping:latest
+    build: .
     container_name: ping
     restart: unless-stopped
-
     environment:
-      - PORT=23451
-
+      - PORT=8080
     ports:
-      - "23451:23451"     # host:container
+      - "8080:8080"     # host:container
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: ping-prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    depends_on:
+      - ping
+
+volumes:
+  prometheus_data:
