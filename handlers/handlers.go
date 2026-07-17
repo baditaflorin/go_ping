@@ -13,8 +13,15 @@ import (
 func PongHandler(w http.ResponseWriter, r *http.Request) {
 	// Log with correlation ID from context
 	middleware.LogWithCorrelationID(r.Context(), "Processing pong request")
+	// main registers this handler on "/" for compatibility, which would
+	// otherwise make arbitrary typo/probe paths look healthy to callers.
+	if r.URL.Path != "/" {
+		http.NotFound(w, r)
+		return
+	}
 
-	w.Header().Set("Content-Type", "text/plain")
+	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+	w.Header().Set("Cache-Control", "no-store")
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprintln(w, "pong")
 }
@@ -23,7 +30,9 @@ func PongHandler(w http.ResponseWriter, r *http.Request) {
 func HealthHandler(w http.ResponseWriter, r *http.Request) {
 	middleware.LogWithCorrelationID(r.Context(), "Processing health check request")
 
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	// A cached healthy response can hide a failed instance behind a proxy.
+	w.Header().Set("Cache-Control", "no-store")
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprintln(w, `{"status":"healthy"}`)
 }
@@ -44,7 +53,8 @@ func PingWithContext(w http.ResponseWriter, r *http.Request) {
 	correlationID := observability.GetCorrelationID(r.Context())
 	middleware.LogWithCorrelationID(r.Context(), "Processing ping request with context id=%s", correlationID)
 
-	w.Header().Set("Content-Type", "text/plain")
+	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+	w.Header().Set("Cache-Control", "no-store")
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprintf(w, "pong (id=%s)\n", correlationID)
 }

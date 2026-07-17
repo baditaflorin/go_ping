@@ -27,8 +27,11 @@ func TestPongHandler(t *testing.T) {
 		t.Errorf("Expected response to contain 'pong', got %s", w.Body.String())
 	}
 
-	if ct := w.Header().Get("Content-Type"); ct != "text/plain" {
+	if ct := w.Header().Get("Content-Type"); ct != "text/plain; charset=utf-8" {
 		t.Errorf("Expected Content-Type text/plain, got %s", ct)
+	}
+	if got := w.Header().Get("Cache-Control"); got != "no-store" {
+		t.Errorf("expected no-store response, got %q", got)
 	}
 }
 
@@ -49,8 +52,20 @@ func TestHealthHandler(t *testing.T) {
 		t.Errorf("Expected response to contain 'healthy', got %s", w.Body.String())
 	}
 
-	if ct := w.Header().Get("Content-Type"); ct != "application/json" {
+	if ct := w.Header().Get("Content-Type"); ct != "application/json; charset=utf-8" {
 		t.Errorf("Expected Content-Type application/json, got %s", ct)
+	}
+	if got := w.Header().Get("Cache-Control"); got != "no-store" {
+		t.Errorf("expected no-store health response, got %q", got)
+	}
+}
+
+func TestPongHandlerRejectsUnknownPaths(t *testing.T) {
+	req := httptest.NewRequest(http.MethodGet, "/accidental-probe-path", nil)
+	w := httptest.NewRecorder()
+	PongHandler(w, req)
+	if w.Code != http.StatusNotFound {
+		t.Fatalf("unknown path must not look healthy, got %d body=%q", w.Code, w.Body.String())
 	}
 }
 
