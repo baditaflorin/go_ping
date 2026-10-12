@@ -2,11 +2,12 @@
 FROM golang:1.23-alpine AS builder
 WORKDIR /src
 
-# Copy go mod files
-COPY go.mod ./
+# Copy go mod files. go.sum must be copied too: `go mod download` does not
+# write the checksums that `go build` requires, so a go.mod-only copy fails
+# with "missing go.sum entry".
+COPY go.mod go.sum ./
 
-# Download dependencies and generate go.sum
-# Using go.sum checksum database for verification
+# Download and verify dependencies against go.sum
 RUN go mod download && go mod verify
 
 # Copy source code
