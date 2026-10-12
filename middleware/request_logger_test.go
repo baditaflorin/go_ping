@@ -6,7 +6,6 @@ import (
 	"log"
 	"net/http"
 	"net/http/httptest"
-	"strings"
 	"sync"
 	"testing"
 
@@ -205,7 +204,7 @@ func TestLogWithCorrelationID(t *testing.T) {
 
 	// We can't easily intercept the standard log package in this test,
 	// but we can verify the function doesn't panic
-	ctx := observability.WithCorrelationID(nil, "test-id")
+	ctx := observability.WithCorrelationID(context.Background(), "test-id")
 
 	// This should not panic
 	LogWithCorrelationID(ctx, "test message")

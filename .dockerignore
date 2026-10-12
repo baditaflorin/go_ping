@@ -2,9 +2,6 @@
 .git
 .gitignore
 
-# Go files that will be regenerated
-go.sum
-
 # Documentation
 README.md
 *.md
